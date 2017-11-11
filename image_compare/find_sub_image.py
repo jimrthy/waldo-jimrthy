@@ -71,10 +71,10 @@ class Matcher:
         @param name2: the name of an image file to examine
         @return
         """
-        # Q: How much difference do we get by adding as_grey=True?
-        # TODO: Try it and see
-        x = io.imread(name1)
-        y = io.imread(name2)
+        # Comparing grayscale images may cut back on accuracy,
+        # but it's very significantly faster.
+        x = io.imread(name1, as_grey=True)
+        y = io.imread(name2, as_grey=True)
         if len(x) < len(y):
             y, x = x, y
         self.calculate_match(x, y)
