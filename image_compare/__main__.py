@@ -11,8 +11,11 @@ Output: """
     print(msg)
 
 def main(a, b):
-    x, y = finder.compare_images(a, b):
-        print "Cropped at position ({}, {})".format(x, y)
+    matcher = finder.Matcher(a, b, 0.8)
+    coordinate = matcher.compare_images()
+    if coordinate:
+        x, y = coordinate
+        print("Cropped at position ({}, {})".format(x, y))
 
 if __name__ == '__main__':
     import sys

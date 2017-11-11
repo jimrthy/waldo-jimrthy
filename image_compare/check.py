@@ -18,28 +18,30 @@ class Subset(unittest.TestCase):
     def setUp(self):
         self.src = data.coins()
         self.subset = self.src[170:220, 75:130]
+        self.matcher = find_sub_image.Matcher()
 
     def test_a_b(self):
-        position = find_sub_image.pick_match(self.subset, self.src, 1.0)
-        self.assertEqual(position[0], 170)
-        self.assertEqual(position[1], 75)
-
-    def test_b_a(self):
-        position = find_sub_image.pick_match(self.src, self.subset, 1.0)
-        self.assertEqual(position[0], 170)
-        self.assertEqual(position[1], 75)
+        self.matcher.calculate_match(self.src, self.subset)
+        position = self.matcher.extract_match(0.99)
+        self.assertEqual(position[0], 75)
+        self.assertEqual(position[1], 170)
 
 
 class Mismatch(unittest.TestCase):
     def setUp(self):
-        self.a = data.coins()
-        self.b = data.camera()
+        self.a = data.camera()
+        self.b = data.coins()
+        self.matcher = find_sub_image.Matcher()
 
     def test_thresholds(self):
-        position = find_sub_image.pick_match(self.a, self.b, 1.0)
+        self.matcher.calculate_match(self.a, self.b)
+        position = self.matcher.extract_match(1.0)
         self.assertIsNone(position)
-        position = find_sub_image.pick_match(self.a, self.b, 0.5)
+        position = self.matcher.extract_match(0.5)
         self.assertIsNone(position)
+        # Eventually, we *can* drop the threshold low enough to get a match
+        position = self.matcher.extract_match(0.1)
+        self.assertEqual(position, (24, 0))
 
 
 if __name__ == '__main__':
