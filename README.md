@@ -81,7 +81,21 @@ best).
 
 Although it does need to cope with lossy compression from jpgs.
 
-# Plan of Attack
+# Revised Plan of Attack
+
+For an preliminary version, just use fast, normalized cross-correlation.
+
+It isn't a great choice, but it's a starting point.
+
+## Limitations
+
+This approach is really quite limited. It isn't expected to work well
+when rotation or scaling is involved.
+
+# Original Plan of Attack
+
+This is how I'd like to handle the problem. It just doesn't seem feasible,
+for a first pass.
 
 Deciding whether an image is a subset of another is a fairly straightforward
 binary classification problem.
