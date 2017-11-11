@@ -40,12 +40,16 @@ The main areas we will be evaluating are:
 
 # Analysis
 
-This is a computer vision problem.
+At first glance, this is a computer vision problem.
 
 There are really 2 major pieces to it:
 
 1. Is one picture a subset of the other?
 2. Where is the top left pixel?
+
+However, there's a simpler approach: start by looking at the EXIF.
+
+Q: How much can I usefully extract from this by looking at real-world photos?
 
 ## Wrinkles
 
@@ -62,6 +66,20 @@ probably be the way to go.
 
 Answers on StackOverflow recommend using something like SIFT or SURF for
 feature detection.
+
+Those depend on a database of existing features.
+
+Realistically, for Waldo Photos, these transformations seem like the most
+interesting/relevant:
+
+* Completely different photos of the same location/subjects, at the same time from different angles
+* Cropped versions of the same photo (this *is* the key to the homework)
+* Color correction
+
+Everything else that I've been pretending might matter is just gravy (at
+best).
+
+Although it does need to cope with lossy compression from jpgs.
 
 # Plan of Attack
 
@@ -149,3 +167,27 @@ Slice and dice those, pretty much randomly, to get subsets.
 Train against that.
 
 See how well it works and proceed from there.
+
+# That's only the first half!
+
+2nd half is "where is the top left corner?"
+
+Actually, this is a pretty strong indicator that they're probably just looking for an
+FFT cross-correlation implementation.
+
+Q: So, do I go with that? Or try to do something innovative?
+
+First alternative approach that comes to mind: binary search.
+
+Start with "is a a subset of b?"
+
+If it is, then split b in half and check again.
+
+That approach seems doomed to fail. This is really a multiclass classification
+problem.
+
+Considering the time constraints, this approach will almost definitely require a
+prohibitive number of training samples.
+
+Plus my initial thoughts about not needing to preprocess images were
+ridiculous. At the very least, they need to start at a uniform size.
