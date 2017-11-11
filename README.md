@@ -92,6 +92,19 @@ It isn't a great choice, but it's a starting point.
 This approach is really quite limited. It isn't expected to work well
 when rotation or scaling is involved.
 
+I wrote this in python 3.6. I think it should work fine in older
+versions, but that hasn't been tested.
+
+## Setup
+
+Run `pip install -r requirements.txt`
+
+## Usage
+
+```
+./subimage ./images/image1.jpeg ./images/image2.jpeg
+```
+
 # Original Plan of Attack
 
 This is how I'd like to handle the problem. It just doesn't seem feasible,
