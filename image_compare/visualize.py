@@ -29,7 +29,6 @@ def display_subset(name1, name2):
     matcher.calculate_match(image, template)
     top_left = matcher.extract_match(0.9)
 
-    #import pdb; pdb.set_trace()
     # highlight matched region
     shape = template.shape
     if len(shape) == 2:
@@ -54,6 +53,7 @@ def display_subset(name1, name2):
         print('Warning: no match found')
 
     plt.show()
+
 
 if __name__ == '__main__':
     name1 = sys.argv[1]

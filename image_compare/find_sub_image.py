@@ -1,31 +1,35 @@
 """
 Find one image inside another
 
-Completely based on scikit-image.org/docs/0.9.x/auto_examples/plot_template.html
+Completely based on
+scikit-image.org/docs/0.9.x/auto_examples/plot_template.html
 """
 
 import time
 
 import numpy as np
-import numpy.linalg as LA
 import skimage.io as io
 from skimage.feature import match_template
 
 
 class Matcher:
+    """
+    Calculates (and stores) a correlation between two images
+    """
     def __init__(self):
         self.correlation = None
 
     def extract_match(self, threshold):
         """
-        Returns the x,y position of a within b if the correlation is above threshold
+        Returns the x,y position of a within b (if any)
 
         @param threshold: float from -1 up to 1
-        @return Top left corner of the match (or None if nothing topped threshold)
+        @return Top left corner of the match (or None if nothing
+        topped threshold)
         """
-        #import pdb; pdb.set_trace()
         # Having 1 matching blip isn't enough.
-        # Honestly, we need to look for a subset the same size as subimage
+        # Honestly, we need to look for a subset the same size as subimage.
+        # On the other hand, it seems to work out OK on my test images.
         strongest = self.correlation.max()
         if strongest > threshold:
             top_left = np.argmax(self.correlation)
@@ -36,22 +40,28 @@ class Matcher:
         """
         This is where the work happens
         """
-        start_time = time.time()
+        # This is slow.
+        # But I don't really have anything else to use
+        # as comparison.
+        # The skimage mailing list implies that it will
+        # run on the GPU. After the images' "first usage
+        # on a GPU backed canvas."
+        # TODO: Delve into that to see if it helps.
         self.correlation = match_template(image, subimage)
-        correlated_time = time.time()
+
         # For color images, we have 3-D "matrices", with
         # 1 plane per color channel
-        # But correlation is grayscale. And calculating the
+        # But correlation should be grayscale.
+        # Crazily enough, it doesn't seem to be.
+        # Although it does only have color plane.
+        # It would be interesting to dig in and find
+        # out what's going on there.
+        # Calculating the
         # norm only works on grayscale, anyway.
         # So ditch that, if it exists
         if self.correlation.ndim == 3:
-            self.correlation = self.correlation.reshape(self.correlation.shape[0:2])
-        length = LA.norm(self.correlation, ord=2)
-        normalized = self.correlation / length
-        calculated_time = time.time()
-        rough_profile = 'Correlating took {} ms. Getting correlation from -1 to 1 took {} ms'
-        print(rough_profile.format((correlated_time - start_time)*1000,
-                                   (calculated_time - correlated_time)*1000))
+            dims = self.correlation.shape[0:2]
+            self.correlation = self.correlation.reshape(dims)
 
     def compare_images(self, name1, name2, threshold):
         """
@@ -62,6 +72,7 @@ class Matcher:
         @return
         """
         # Q: How much difference do we get by adding as_grey=True?
+        # TODO: Try it and see
         x = io.imread(name1)
         y = io.imread(name2)
         if len(x) < len(y):

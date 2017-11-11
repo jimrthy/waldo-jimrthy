@@ -1,44 +1,36 @@
 # Waldo Photos Engineering Project
 
-The goal of this project is to produce a working system that can be used as a conversation piece during your on-site interview. Be prepared to:
+## Implementation
 
-* Present your solution to a group of smart engineers like yourself.
-* Talk about the decisions that went into the creation of your solution.
-* Explain how you see the solution evolving over time.
-* Discuss the runtime characteristics of the system.
-* Discuss technical design tradeoffs and the cost-benefit analysis of those decisions.
+For a preliminary version, I went with "fast, normalized cross-correlation."
 
-### Deliverable
+It isn't a great choice, but it's a starting point.
 
-Using any language and data-store of your choice, write a console application that takes two arguments. The arguments are locations of two image files.
+I used the implementation skimage. It almost feels like cheating, but it seemed like
+the obvious approach.
 
-Example:
-```bash
-subimage ./images/image1.jpeg ./images/image2.jpeg
+### Limitations/Assumptions
+
+This approach is really quite limited. It isn't expected to work well
+when rotation or scaling is involved.
+
+I wrote this in python 3.6. I think it should work fine in older
+versions, but that hasn't been tested.
+
+### Setup
+
+Run `pip install -r requirements.txt`
+
+TODO: Add a setup.py
+
+### Usage
+
+```
+./subimage ./images/image1.jpeg ./images/image2.png
 ```
 
-The application should return information if one of the images is a cropped part of the other one. If yes, the application should also return the position of top-left
-corner of the cropped image within the original image.
 
-Notes:
- - The images may be provided in any order (the cropped image may be the first or the second).
- - The application should work well on JPEGs with some lossy compression enabled.
-
-You can make any additional assumptions, as long as you are explicit about these.
-
-Please deliver the finished project in a publicly available repository on Github. Please title the repository as `waldo-${ github-handle }`.
-
-Deliveries via private repos, BitBucket, or anything other than what is specified above will be disqualified.
-
-### Evaluation
-
-The main areas we will be evaluating are:
-
-- organization of responsibility
-- performance
-- resilience to failures.
-
-# Analysis
+## Thought Process
 
 At first glance, this is a computer vision problem.
 
@@ -47,13 +39,13 @@ There are really 2 major pieces to it:
 1. Is one picture a subset of the other?
 2. Where is the top left pixel?
 
-However, there's a simpler approach: start by looking at the EXIF.
+However, there's a simpler approach than hefty number crunching: start by looking at the EXIF.
 
 Q: How much can I usefully extract from this by looking at real-world photos?
 
-## Wrinkles
+### Wrinkles
 
-### Manipulated Images
+#### Manipulated Images
 
 * What about pictures that are rotated?
 * Or stretched?
@@ -81,31 +73,7 @@ best).
 
 Although it does need to cope with lossy compression from jpgs.
 
-# Revised Plan of Attack
-
-For an preliminary version, just use fast, normalized cross-correlation.
-
-It isn't a great choice, but it's a starting point.
-
-## Limitations
-
-This approach is really quite limited. It isn't expected to work well
-when rotation or scaling is involved.
-
-I wrote this in python 3.6. I think it should work fine in older
-versions, but that hasn't been tested.
-
-## Setup
-
-Run `pip install -r requirements.txt`
-
-## Usage
-
-```
-./subimage ./images/image1.jpeg ./images/image2.jpeg
-```
-
-# Original Plan of Attack
+## Original Plan of Attack
 
 This is how I'd like to handle the problem. It just doesn't seem feasible,
 for a first pass.
@@ -113,7 +81,7 @@ for a first pass.
 Deciding whether an image is a subset of another is a fairly straightforward
 binary classification problem.
 
-## Training Image Acquisition
+### Training Image Acquisition
 
 We're going to need lots of images for training the network. The more variety
 that's involved, the better.
@@ -125,7 +93,7 @@ Actually, the imgur API seems like a rich source of random images.
 One important detail is that we really don't want the starting set to include
 subimages. That's probably best done by hand at first.
 
-## Training Image Manipulation
+### Training Image Manipulation
 
 Once we have a starting library, use something like PIL, scikit-image, or OpenCV
 to extract subsets.
@@ -134,7 +102,7 @@ For version 1:
 Start with the easy version that just clips an image without doing any other
 processing.
 
-## Image Analysis
+### Image Analysis
 
 Processing megapixel images seems very likely to be prohibitively expensive.
 
@@ -147,9 +115,9 @@ Start with the full-blown version and see how well it works.
 One of the advantages of using a neural network is that it learns the filtering that
 other approaches require.
 
-## Performance Analysis
+### Performance Analysis
 
-### Real-time monitoring
+#### Real-time monitoring
 
 It would be great to have a GUI that shows what the various hidden layers are
 doing.
@@ -157,11 +125,11 @@ doing.
 It isn't useful for the command-line version we have here, but it's worth keeping
 in mind.
 
-### Performance Checking
+#### Performance Checking
 
 Need to keep an eye on training curves to be sure results are reasonable.
 
-## This is a couple of dataflow pipelines
+### This is a couple of dataflow pipelines
 
 I might as well use this as excuse to finish open sourcing my transformers library
 and putting it to use. Assuming I *do* write this in python.
@@ -174,11 +142,11 @@ pipeline stages as we would otherwise.
 Well, treating each layer as a transformation step would be worthwhile if we were
 batch processing lots of images.
 
-### Trainer
+#### Trainer
 
-### Analysis program
+#### Analysis program
 
-## More concretely
+### More concretely
 
 Actually, a reasonable starting point might be to start with, say, 50 hand-curated
 images. (Q: What are the odds that really will be enough as a useful starting
@@ -195,7 +163,7 @@ Train against that.
 
 See how well it works and proceed from there.
 
-# That's only the first half!
+## That's only the first half!
 
 2nd half is "where is the top left corner?"
 

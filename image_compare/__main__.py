@@ -1,5 +1,8 @@
 #! /bin/env python
 
+import sys
+import traceback as tb
+
 import find_sub_image as finder
 
 
@@ -10,16 +13,23 @@ python image_compare path/to/file1.jpg path/to/file2.png
 Output: """
     print(msg)
 
+
 def main(a, b):
-    matcher = finder.Matcher(a, b, 0.8)
-    coordinate = matcher.compare_images()
-    if coordinate:
-        x, y = coordinate
-        print("Cropped at position ({}, {})".format(x, y))
+    matcher = finder.Matcher()
+    try:
+        coordinate = matcher.compare_images(a, b, 0.9)
+        if coordinate:
+            x, y = coordinate
+            print("Cropped at position ({}, {})".format(x, y))
+    except Exception:
+        tb.print_exc()
+        return -1
+    else:
+        return 0
+
 
 if __name__ == '__main__':
-    import sys
     if len(sys.argv) != 3:
         usage()
     else:
-        main(sys.argv[1], sys.argv[2])
+        sys.exit(main(sys.argv[1], sys.argv[2]))
