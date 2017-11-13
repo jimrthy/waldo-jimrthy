@@ -17,6 +17,8 @@ when rotation or scaling is involved.
 I wrote this in python 3.6. I think it should work fine in older
 versions, but that hasn't been tested.
 
+I just realized that the test images I've used all had the same color depth.
+
 ### Setup
 
 Run `pip install -r requirements.txt`
@@ -29,6 +31,37 @@ TODO: Add a setup.py
 ./subimage ./images/image1.jpeg ./images/image2.png
 ```
 
+## Next Steps
+
+### Add more tests
+
+Get a feel for this approach's limits.
+
+* scaling
+* color correction
+* rotation
+
+### Client/server approach
+
+Add a web server front-end.
+
+Have the subimage script use something like curl to
+submit the request to that instead of just forking
+a new process.
+
+### Add more pipeline steps
+
+Switching to a grayscale comparison helped quite a bit with speed. But
+there must be other steps that could do rejection more quickly. Look
+for algorithms that handle this.
+
+Having more steps and a long-running server make something like a dataflow
+library more attractive.
+
+### Move on to original neural network plan
+
+It would have taken too long for me to implement for this assignment. But it
+seems much more promising.
 
 ## Thought Process
 

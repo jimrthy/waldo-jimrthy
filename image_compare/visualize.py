@@ -25,21 +25,21 @@ def display_subset(name1, name2):
     ax2.set_axis_off()
     ax2.set_title('image')
 
-    matcher = finder.Matcher()
-    matcher.calculate_match(image, template)
-    top_left = matcher.extract_match(0.9)
+    correlation = finder.calculate_match(image, template)
+    top_left = finder.extract_match(correlation, 0.9)
 
     # highlight matched region
-    shape = template.shape
-    if len(shape) == 2:
-        h, w = template.shape
-    else:
-        # Assume this means it's grayscale
-        h, w, _ = template.shape
-    rect = plt.Rectangle(top_left, w, h, edgecolor='r', facecolor='none')
-    ax2.add_patch(rect)
+    if top_left:
+        shape = template.shape
+        if len(shape) == 2:
+            h, w = template.shape
+        else:
+            # Assume this means it's grayscale
+            h, w, _ = template.shape
+        rect = plt.Rectangle(top_left, w, h, edgecolor='r', facecolor='none')
+        ax2.add_patch(rect)
 
-    ax3.imshow(matcher.correlation)
+    ax3.imshow(correlation)
     ax3.set_axis_off()
     ax3.set_title('`match template`\nresult')
     # highlight matched region

@@ -15,12 +15,15 @@ Output: """
 
 
 def main(a, b):
-    matcher = finder.Matcher()
     try:
-        coordinate = matcher.compare_images(a, b, 0.9)
+        result = finder.compare_images(a, b, 0.9)
+        coordinate = result['top_left']
         if coordinate:
-            x, y = coordinate
-            print("Cropped at position ({}, {})".format(x, y))
+            fmt = ("{} is a cropped version of {}, "
+                   "starting at at position {}")
+            print(fmt.format(result['template_name'],
+                             result['image_name'],
+                             coordinate))
     except Exception:
         tb.print_exc()
         return -1
