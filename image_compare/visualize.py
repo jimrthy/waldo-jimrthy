@@ -6,16 +6,14 @@ Script for visualizing what the comparison is doing
 import sys
 
 import matplotlib.pyplot as plt
-import skimage.io as io
 
 import find_sub_image as finder
 
 
 def display_subset(name1, name2):
-    image = io.imread(name1)
-    template = io.imread(name2)
-    if len(image) < len(template):
-        image, template = template, image
+    description = finder.load_images(name1, name2)
+    image = description['image']
+    template = description['template']
     fig, (ax1, ax2, ax3) = plt.subplots(ncols=3, figsize=(8, 3))
     ax1.imshow(template)
     ax1.set_axis_off()
@@ -34,7 +32,8 @@ def display_subset(name1, name2):
         if len(shape) == 2:
             h, w = template.shape
         else:
-            # Assume this means it's grayscale
+            # It has multiple planes (probably R, G, B,
+            # and possibly alpha)
             h, w, _ = template.shape
         rect = plt.Rectangle(top_left, w, h, edgecolor='r', facecolor='none')
         ax2.add_patch(rect)

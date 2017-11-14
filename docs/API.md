@@ -2,35 +2,11 @@
 
 This is really the most interesting module here.
 
-It contains 1 class, Matcher.
-
-## compare_images
-
-Parameters:
-* name1 - name of first image file to consider
-* name2 - name of the second image file to consider
-* threshold - how much leeway do we provide to matches?
-
-Returns: top-left corner of a match, if any
-
-In general, just use this. The other two are really
-for fine-grained control during testing.
-
-## calculate_match
-
-Parameters: 2 numpy arrays. 1 for the image (which might
-contain the template), 1 for the template (aka subimage).
-
-Returns: None. This function is called for side-effects.
-
-This builds a correlation array (stored in self.correlation) that
-describes the similarities between the image and the template.
-
-The values in here range from -1 to 1.
-
 ## extract_match
 
-Parameters: threshold
+Parameters:
+* correlation: as returned by calculate_match
+* threshold: how good must the "match" be?
 
 Returns: The top left corner of the match
 
@@ -46,6 +22,49 @@ for playing with.
 I don't have a good feel (yet) for good values. In the
 [limited] tests I've run, 0.5 seems "good enough." But
 actual clipped images get very close to 1.0.
+
+## calculate_match
+
+Parameters: 2 numpy arrays.
+* image (which might contain the template)
+* template (aka subimage).
+
+Returns: A "correlation" array that
+describes the similarities between the image and the template.
+
+The values in that range from -1 to 1.
+
+## load_images
+
+Parameters:
+* name1: Name of one image file to load
+* name2: Name of the other image file to load
+
+Returns:
+A dict that contains the keys:
+* template: smaller image
+* image larger image
+* template\_name: name of the smaller image file
+* image\_name: name of the larger image file
+
+## compare_images
+
+Parameters:
+* name1 - name of first image file to consider
+* name2 - name of the second image file to consider
+* threshold - how much leeway do we provide to matches?
+
+Returns:
+A dict that contains the keys:
+* template: smaller image
+* image larger image
+* template\_name: name of the smaller image file
+* image\_name: name of the larger image file
+* top_left: An (x, y) coordinate pair suitable for plotting.
+  Or None, if no match was better than threshold.
+
+In general, just use this. The other functions are really
+for fine-grained control during testing.
 
 # image_compare.visualize
 
