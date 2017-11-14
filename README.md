@@ -4,20 +4,23 @@
 
 For a preliminary version, I went with "fast, normalized cross-correlation."
 
-It isn't a great choice, but it's a starting point.
+It isn't a great choice, but it's a starting point. And fits the current requirements
+very well.
 
-I used the implementation skimage. It almost feels like cheating, but it seemed like
+I used the implementation in skimage. It almost feels like cheating, but it seemed like
 the obvious approach.
 
 ### Limitations/Assumptions
 
 This approach is really quite limited. It isn't expected to work well
-when rotation or scaling is involved.
+when rotation or scaling is involved. (I hit the time limit and didn't
+have a chance to really exercise it to see how well it really performs).
 
 I wrote this in python 3.6. I think it should work fine in older
 versions, but that hasn't been tested.
 
-I just realized that the test images I've used all had the same color depth.
+All the images I've tested have been 24-bit color. It would be very interesting
+to see how well it works with variations.
 
 ### Setup
 
@@ -25,7 +28,7 @@ Run `pip install -r requirements.txt`
 
 TODO: Add a setup.py
 
-### Usage
+### Example Usage
 
 ```
 ./subimage ./images/image1.jpeg ./images/image2.png
@@ -39,9 +42,10 @@ Get a feel for this approach's limits.
 
 * scaling
 * color correction
+* changes in color depth
 * rotation
 
-### Client/server approach
+### Client/server/worker approach
 
 Add a web server front-end.
 
@@ -49,21 +53,29 @@ Have the subimage script use something like curl to
 submit the request to that instead of just forking
 a new process.
 
+Tornado proably makes a lot of sense for that web server.
+Have it push work requests to a message queue. Then have
+individual workers pull requests off that queue and
+use it to send back responses when they're done.
+
+This part gets interesting when we start considering
+failure modes and error handling.
+
 ### Add more pipeline steps
 
 Switching to a grayscale comparison helped quite a bit with speed. But
 there must be other steps that could do rejection more quickly. Look
-for algorithms that handle this.
+for algorithms for handling the initial rejection more quickly.
 
 Having more steps and a long-running server make something like a dataflow
-library more attractive.
+engine more attractive.
 
 ### Move on to original neural network plan
 
 It would have taken too long for me to implement for this assignment. But it
 seems much more promising.
 
-## Thought Process
+## My Original Plan
 
 At first glance, this is a computer vision problem.
 
@@ -74,7 +86,7 @@ There are really 2 major pieces to it:
 
 However, there's a simpler approach than hefty number crunching: start by looking at the EXIF.
 
-Q: How much can I usefully extract from this by looking at real-world photos?
+Q: How much can I usefully extract from that by looking at real-world photos?
 
 ### Wrinkles
 
@@ -135,6 +147,9 @@ For version 1:
 Start with the easy version that just clips an image without doing any other
 processing.
 
+Next version:
+Start adding more interesting edits.
+
 ### Image Analysis
 
 Processing megapixel images seems very likely to be prohibitively expensive.
@@ -146,7 +161,8 @@ Converting to grayscale seems like it should be safe enough.
 Start with the full-blown version and see how well it works.
 
 One of the advantages of using a neural network is that it learns the filtering that
-other approaches require.
+other approaches require. (But everything would still need to start at the same
+size)
 
 ### Performance Analysis
 
@@ -181,16 +197,12 @@ batch processing lots of images.
 
 ### More concretely
 
-Actually, a reasonable starting point might be to start with, say, 50 hand-curated
-images. (Q: What are the odds that really will be enough as a useful starting
-point?)
-
-Train a neural network with those, then use that to check whether the randomly
-acquired images are subsets of each other.
-
 Now pull down more (500 seems like a good starting point) for training.
 
-Slice and dice those, pretty much randomly, to get subsets.
+Use the original FFT cross-correlation to verify that none of these are
+cropped versions of the others.
+
+Slice and dice those, pretty much randomly, to get the cropped images.
 
 Train against that.
 
@@ -216,6 +228,3 @@ problem.
 
 Considering the time constraints, this approach will almost definitely require a
 prohibitive number of training samples.
-
-Plus my initial thoughts about not needing to preprocess images were
-ridiculous. At the very least, they need to start at a uniform size.
