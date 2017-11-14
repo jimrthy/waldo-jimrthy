@@ -9,8 +9,7 @@ import find_sub_image as finder
 def usage():
     msg = """Usage:
 python image_compare path/to/file1.jpg path/to/file2.png
-
-Output: """
+"""
     print(msg)
 
 

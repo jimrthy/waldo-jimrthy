@@ -38,6 +38,7 @@ def calculate_match(image, template):
     # This is slow.
     # But I don't really have anything else to use
     # as comparison.
+    # So maybe it's about as fast as can be expected.
     # The skimage mailing list implies that it will
     # run on the GPU. After the images' "first usage
     # on a GPU backed canvas."
@@ -48,7 +49,7 @@ def calculate_match(image, template):
     # 1 plane per color channel
     # But correlation should be grayscale.
     # Crazily enough, it doesn't seem to be.
-    # Although it does only have color plane.
+    # Although it does only have 1 color plane.
     # It would be interesting to dig in and find
     # out what's going on there.
     # Calculating the
@@ -64,7 +65,7 @@ def load_images(name1, name2):
     """
     Read image files into byte arrays
 
-    @return A dict that contains:
+    @return A dict that contains the keys:
     template: smaller image
     image larger image
     template_name: name of the smaller image file
@@ -93,7 +94,7 @@ def compare_images(name1, name2, threshold):
 
     @param name1: the name of an image file to examine
     @param name2: the name of an image file to examine
-    @return A dict that contains:
+    @return A dict that contains the keys:
     template: smaller image
     image larger image
     template_name: name of the smaller image file

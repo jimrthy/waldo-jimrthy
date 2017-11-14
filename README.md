@@ -84,7 +84,8 @@ There are really 2 major pieces to it:
 1. Is one picture a subset of the other?
 2. Where is the top left pixel?
 
-However, there's a simpler approach than hefty number crunching: start by looking at the EXIF.
+However, there may be a simpler approach than hefty number crunching: start
+by looking at the EXIF.
 
 Q: How much can I usefully extract from that by looking at real-world photos?
 

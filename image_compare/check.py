@@ -4,7 +4,8 @@
 Unit testing
 """
 
-# Sticking this in the same folder is a bad idea for bigger projects.
+# Sticking this in the same folder as "real" source files
+# really isn't a great way to organize bigger projects.
 # For something this small, it's convenient
 
 import unittest
